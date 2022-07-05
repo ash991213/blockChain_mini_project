@@ -522,3 +522,5 @@
 17:30:17.739567 table@remove removed @131
 17:30:17.739868 table@remove removed @128
 17:30:17.740022 table@remove removed @129
+18:01:26.211410 db@close closing
+18:01:26.212592 db@close done T·1.1808ms
