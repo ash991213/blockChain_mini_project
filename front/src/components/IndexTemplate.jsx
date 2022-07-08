@@ -10,36 +10,71 @@ const MainTemplate = styled.div`
 		padding: 0;
 	}
 
+	a {
+		text-decoration: none;
+		color: blue;
+	}
+
 	ul,
 	li {
 		list-style: none;
 	}
 
+	.search {
+		width: 100%;
+		height: 5rem;
+		border-bottom: 0.1rem #000 solid;
+		& > .searchForm {
+			width: 50%;
+			height: 100%;
+			transform: translate(70%, 25%);
+			& > .text {
+				width: 50%;
+				height: 50%;
+				font-size: 15px;
+			}
+			& > a {
+				padding: 8px 5px 12px 5px;
+				margin-left: 0.3rem;
+				border: 0.1rem #000 solid;
+			}
+		}
+	}
+
 	.body {
 		width: 100%;
 		height: 90%;
+		padding-top: 3rem;
 	}
 
 	.blockList {
 		width: 45%;
-		height: 50%;
+		height: 75%;
 		float: left;
 		text-align: center;
 		border: 0.1rem #000 solid;
 		border-radius: 1rem;
 		margin-left: 3%;
-		overflow: scroll;
+		overflow-y: scroll;
+		-ms-overflow-style: none;
+		::-webkit-scrollbar {
+			display: none;
+		}
 	}
 
 	.txList {
 		width: 45%;
-		height: 50%;
+		height: 75%;
 		float: right;
 		text-align: center;
 		border: 0.1rem #000 solid;
 		border-radius: 1rem;
 		margin-right: 3%;
-		overflow: scroll;
+		overflow-y: scroll;
+		-ms-overflow-style: none;
+		::-webkit-scrollbar {
+			display: none;
+		}
 	}
 
 	.blockHeader {
@@ -52,7 +87,7 @@ const MainTemplate = styled.div`
 
 	.block,
 	.tx {
-		width: 80%;
+		width: 95%;
 		height: 4rem;
 		font-weight: bold;
 		border: 0.1rem #000 solid;
@@ -82,13 +117,13 @@ const MainTemplate = styled.div`
 		}
 		& > .blockLeft,
 		.txLeft {
-			width: 30%;
+			width: 19%;
 			height: 100%;
 			& > .block_number {
 				width: 70%;
 				height: 40%;
 				margin-left: 5%;
-				margin-top: 3%;
+				margin-top: 6%;
 			}
 			& > .timestamp {
 				width: 70%;
@@ -97,14 +132,16 @@ const MainTemplate = styled.div`
 			}
 		}
 		& > .blockRight {
-			width: 60%;
+			width: 80%;
 			height: 100%;
 		}
 		& > .txLeft {
-			margin-left: 2%;
+			margin-left: 1%;
 			margin-top: 1.5%;
+			width: 40%;
 			& > .transactionHash {
-				width: 70%;
+				width: 95%;
+				text-overflow: ellipsis;
 				overflow: hidden;
 			}
 		}

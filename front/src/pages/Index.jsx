@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-
-const ws = new WebSocket('ws://localhost:4000');
+import { Link } from 'react-router-dom';
 
 const Index = () => {
 	const [block, setBlock] = useState([]);
@@ -12,7 +11,7 @@ const Index = () => {
 
 		if (timestamp >= 3600) time = Math.floor(timestamp / 3600) + '시간전';
 		else if (timestamp >= 60) time = Math.floor(timestamp / 60) + '분전';
-		else time = timestamp + '초전';
+		else time = timestamp + 3 + '초전';
 
 		return time;
 	};
@@ -20,16 +19,24 @@ const Index = () => {
 	const blockList = (_block) => {
 		const blocks = _block.map((v, k) => {
 			return (
-				<div className='block'>
+				<div className='block' key={k}>
 					<div className='Bk'>
 						<span>Block</span>
 					</div>
 					<div className='blockLeft'>
-						<div className='block_number'>Number:{v.number}</div>
+						<div className='block_number'>
+							<Link to='/Search' state={{ data: v.number }}>
+								Number:{v.number}
+							</Link>
+						</div>
 						<div className='timestamp'>Time : {whatTime(v.timestamp)} </div>
 					</div>
 					<div className='blockRight'>
-						<div className='difficulty'>Difficulty : {v.difficulty}</div>
+						<div className='hash'>
+							<Link to='/Search' state={{ data: v.hash }}>
+								Hash : {v.hash}
+							</Link>
+						</div>
 						<div className='miner'>Miner : {v.miner}</div>
 						<div className='nonce'>Nonce : {v.nonce}</div>
 					</div>
@@ -42,7 +49,7 @@ const Index = () => {
 	const txList = (_tx) => {
 		const txs = _tx.map((v, k) => {
 			return (
-				<div className='tx'>
+				<div className='tx' key={k}>
 					<div className='Tx'>
 						<span>Tx</span>
 					</div>
@@ -51,8 +58,16 @@ const Index = () => {
 						<div className='blockNumber'>BlockNumber : {v.blockNumber} </div>
 					</div>
 					<div className='trRight'>
-						<div className='from'>From : {v.from}</div>
-						<div className='to'>To : {v.to}</div>
+						<div className='from'>
+							<Link to='/Search' state={{ data: v.from }}>
+								From : {v.from}
+							</Link>
+						</div>
+						<div className='to'>
+							<Link to='/Search' state={{ data: v.to }}>
+								To : {v.to}
+							</Link>
+						</div>
 					</div>
 				</div>
 			);
@@ -60,31 +75,52 @@ const Index = () => {
 		return txs;
 	};
 
+	const [data, setData] = useState('');
+
+	const onChange = (e) => {
+		setData(e.target.value);
+	};
+
 	useEffect(() => {
+		const ws = new WebSocket('ws://localhost:4000');
+
 		ws.onopen = () => {
 			console.log('Front 웹소켓 연결');
+			ws.send(JSON.stringify('블록 정보 요청'));
+			ws.onmessage = (response) => {
+				const { block, tx } = JSON.parse(response.data);
+
+				setBlock(block);
+				setTx(tx);
+			};
 		};
 
-		ws.onmessage = (response) => {
-			console.log('hello');
-			const { block, tx } = JSON.parse(response.data);
-
-			setBlock(block);
-			setTx(tx);
+		return () => {
+			ws.close();
 		};
-	}, [block]);
+	}, []);
 
 	return (
-		<div className='body'>
-			<div className='blockList'>
-				<h1 className='blockHeader'>Latest Blocks</h1>
-				<div>{block !== [] ? blockList(block) : null}</div>
+		<>
+			<div className='search'>
+				<form className='searchForm'>
+					<input className='text' onChange={onChange} type='text' placeholder='Search By Address / Block Hash / Block Number' />
+					<Link to='/Search' state={{ data: data }}>
+						Search
+					</Link>
+				</form>
 			</div>
-			<div className='txList'>
-				<h1 className='txHeader'>Latest Transactions</h1>
-				<div>{tx !== [] ? txList(tx) : null}</div>
+			<div className='body'>
+				<div className='blockList'>
+					<h1 className='blockHeader'>Latest Blocks</h1>
+					<div>{block !== [] ? blockList(block) : null}</div>
+				</div>
+				<div className='txList'>
+					<h1 className='txHeader'>Latest Transactions</h1>
+					<div>{tx !== [] ? txList(tx) : null}</div>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
